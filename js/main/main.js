@@ -11,13 +11,30 @@ let config = {
     PRESSURE_DISSIPATION: 0.8,
     PRESSURE_ITERATIONS: 25,
     CURL: 30,
-    SPLAT_RADIUS: 0.005
+    SPLAT_RADIUS: 0.005,
+	ORGANISM_COUNT: 5
 }
 
 let pointers = [];
 let splatStack = [];
+let organisms = [];
+
+
 
 const  { gl, ext } = getWebGLContext(canvas);
+
+function initOrganisms () {
+	for (let i = 0; i < config.ORGANISM_COUNT; i++) {
+		organisms[i] = {
+			x: Math.random() * canvas.width,
+			y: Math.random() * canvas.height,
+			dx: Math.random()*10 - 5,
+			dy: Math.random()*10 - 5,
+        	color: [Math.random() * 10, Math.random() * 10, Math.random() * 10]
+		};
+    }
+}
+
 
 function getWebGLContext (canvas) {
     const params = { alpha: false, depth: false, stencil: false, antialias: false };
@@ -492,7 +509,7 @@ const blit = (() => {
 })();
 
 let lastTime = Date.now();
-multipleSplats(parseInt(Math.random() * 20) + 5);
+initOrganisms();
 update();
 
 function update () {
@@ -527,6 +544,13 @@ function update () {
             splat(pointer.x, pointer.y, pointer.dx, pointer.dy, pointer.color);
             pointer.moved = false;
         }
+    }
+
+    for (let i = 0; i < organisms.length; i++) {
+        const org = organisms[i];
+        splat(org.x, org.y, org.dx, org.dy, org.color);
+		org.x = org.x + org.dx;
+		org.y = org.y + org.dy;
     }
 
     curlProgram.bind();
