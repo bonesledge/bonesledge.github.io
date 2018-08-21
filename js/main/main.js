@@ -546,12 +546,7 @@ function update () {
         }
     }
 
-    for (let i = 0; i < organisms.length; i++) {
-        const org = organisms[i];
-        splat(org.x, org.y, org.dx, org.dy, org.color);
-		org.x = org.x + org.dx;
-		org.y = org.y + org.dy;
-    }
+	updateOrganisms();
 
     curlProgram.bind();
     gl.uniform2f(curlProgram.uniforms.texelSize, 1.0 / textureWidth, 1.0 / textureHeight);
@@ -607,6 +602,28 @@ function update () {
 
     requestAnimationFrame(update);
 }
+
+function updateOrganisms() {
+    for (let i = 0; i < organisms.length; i++) {
+        const org = organisms[i];
+        splat(org.x, org.y, org.dx, org.dy, org.color);
+		org.x = org.x + org.dx;
+		org.y = org.y + org.dy;
+		if (org.x > canvas.width) {
+			org.x -= canvas.width;
+		}
+		if (org.y > canvas.height) {
+			org.y -= canvas.height;
+		}
+		if (org.x < 0) {
+			org.x += canvas.width;
+		}
+		if (org.y < 0) {
+			org.y += canvas.height;
+		}
+    }
+}
+
 
 function splat (x, y, dx, dy, color) {
     splatProgram.bind();
