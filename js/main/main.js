@@ -33,7 +33,7 @@ function initOrganisms () {
 			dy: 2*(Math.random()*10 - 5),
         	color: [Math.random() * 10, Math.random() * 10, Math.random() * 10],
 			updatePos: function() {
-				this.x = this.x + this.dx;
+				//this.x = this.x + this.dx;
 				this.y = this.y + this.dy;
 			}
 		};
