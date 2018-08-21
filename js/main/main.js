@@ -7,7 +7,8 @@ canvas.height = canvas.clientHeight;
 let config = {
     TEXTURE_DOWNSAMPLE: 1,
     DENSITY_DISSIPATION: 0.98,
-    VELOCITY_DISSIPATION: 0.99,
+    //VELOCITY_DISSIPATION: 0.99,
+    VELOCITY_DISSIPATION: 0.999,
     PRESSURE_DISSIPATION: 0.8,
     PRESSURE_ITERATIONS: 25,
     CURL: 30,
@@ -28,9 +29,13 @@ function initOrganisms () {
 		organisms[i] = {
 			x: Math.random() * canvas.width,
 			y: Math.random() * canvas.height,
-			dx: Math.random()*10 - 5,
-			dy: Math.random()*10 - 5,
-        	color: [Math.random() * 10, Math.random() * 10, Math.random() * 10]
+			dx: 2*(Math.random()*10 - 5),
+			dy: 2*(Math.random()*10 - 5),
+        	color: [Math.random() * 10, Math.random() * 10, Math.random() * 10],
+			updatePos: function() {
+				this.x = this.x + this.dx;
+				this.y = this.y + this.dy;
+			}
 		};
     }
 }
@@ -509,6 +514,7 @@ const blit = (() => {
 })();
 
 let lastTime = Date.now();
+let updates = 0;
 initOrganisms();
 update();
 
@@ -546,7 +552,9 @@ function update () {
         }
     }
 
-	updateOrganisms();
+	if (updates % 2 == 0) {
+		updateOrganisms();
+	}
 
     curlProgram.bind();
     gl.uniform2f(curlProgram.uniforms.texelSize, 1.0 / textureWidth, 1.0 / textureHeight);
@@ -601,14 +609,18 @@ function update () {
     blit(null);
 
     requestAnimationFrame(update);
+	updates++;
 }
 
 function updateOrganisms() {
     for (let i = 0; i < organisms.length; i++) {
         const org = organisms[i];
-        splat(org.x, org.y, org.dx, org.dy, org.color);
-		org.x = org.x + org.dx;
-		org.y = org.y + org.dy;
+
+        const splatDx = 1000 * (Math.random() - 0.5);
+        const splatDy = 1000 * (Math.random() - 0.5);
+        splat(org.x, org.y, splatDx, splatDy, org.color);
+		org.updatePos();
+
 		if (org.x > canvas.width) {
 			org.x -= canvas.width;
 		}
