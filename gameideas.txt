@@ -1,0 +1,39 @@
+
+visual art organisms on a website
+like you draw a 3d organism similarly to this http://weavesilk.com/
+and then unleash it in a sort of simulation of an ocean environment
+then make more
+and they interact and multiply and mutate like bacteria or protists
+and it makes like a flowing artwork world
+
+there are flows
+In the ocean
+rather than it being a void
+like currents
+
+i was thinking the organisms have trails, like you can see where they have been, like these exhaust streams in Homeworld
+in addition to the current of the water
+well the movement of organisms affects the flow of water in fluid dynamics
+but i guess
+maybe you birth the organisms
+and then in order to influence them
+nudge them
+you can alter the flows of current
+and there will be lots of vortices
+
+next step:
+boids in fluid
+
+
+boids - organisms flock
+https://github.com/hughsk/boids
+and fear
+https://www.researchgate.net/publication/220618923_On_the_Use_of_Virtual_Animals_with_Artificial_Fear_in_Virtual_Environments
+
+organisms evolve
+
+photosynthesizer
+detritrivore
+omnivore
+carnivore
+herbivore
