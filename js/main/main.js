@@ -14,7 +14,7 @@ let config = {
     CURL: 30,
     SPLAT_MOUSE_RADIUS: 0.0005,
     SPLAT_RADIUS: 0.000005,
-	ORGANISM_COUNT: 50
+    ORGANISM_COUNT: 50
 }
 
 let pointers = [];
@@ -33,34 +33,34 @@ let placeholdercolor = [Math.random() * 10, Math.random() * 10, Math.random() * 
 const  { gl, ext } = getWebGLContext(canvas);
 
 function initOrganisms () {
-		organisms[0] = [];
-		for (let i = 0; i < config.ORGANISM_COUNT; i++) {
-				organisms[0][i] = [
-						Math.random() * canvas.width * 0.1, Math.random() * canvas.height * 0.1 // position
-						, 0, 0                              // speed
-						, 0, 0                               // acceleration
-				]
-		}
+    organisms[0] = [];
+    for (let i = 0; i < config.ORGANISM_COUNT; i++) {
+        organisms[0][i] = [
+            Math.random() * canvas.width * 0.1, Math.random() * canvas.height * 0.1 // position
+            , 0, 0                              // speed
+            , 0, 0                               // acceleration
+        ]
+    }
 }
 
 let boidConfig = {
 
-		speedLimitRoot: 2,
-		accelerationLimitRoot: 1,
-		speedLimit: 4,
-		accelerationLimit: 1,
-		separationDistance: 3600,
-		alignmentDistance: 32400,
-		cohesionDistance: 32400,
-		separationForce: 0.15,
-		cohesionForce: 0.1,
-		alignmentForce: 0.25,
-		attractors: [[
-				Infinity // x
-				, Infinity // y
-				, 150 // dist
-				, 0.25 // spd
-		]]
+    speedLimitRoot: 2,
+    accelerationLimitRoot: 1,
+    speedLimit: 4,
+    accelerationLimit: 1,
+    separationDistance: 3600,
+    alignmentDistance: 32400,
+    cohesionDistance: 32400,
+    separationForce: 0.15,
+    cohesionForce: 0.1,
+    alignmentForce: 0.25,
+    attractors: [[
+        Infinity // x
+        , Infinity // y
+        , 150 // dist
+        , 0.25 // spd
+    ]]
 }
 const POSITIONX = 0
 const POSITIONY = 1
@@ -72,119 +72,119 @@ const ACCELERATIONY = 5
 
 function updateOrgPos () {
 
-		let flock = organisms[0];
-		var current = flock.length;
+    let flock = organisms[0];
+    var current = flock.length;
 
 
-		var sepDist = boidConfig.separationDistance
-				, sepForce = boidConfig.separationForce
-				, cohDist = boidConfig.cohesionDistance
-				, cohForce = boidConfig.cohesionForce
-				, aliDist = boidConfig.alignmentDistance
-				, aliForce = boidConfig.alignmentForce
-				, speedLimit = boidConfig.speedLimit
-				, accelerationLimit = boidConfig.accelerationLimit
-				, accelerationLimitRoot = boidConfig.accelerationLimitRoot
-				, speedLimitRoot = boidConfig.speedLimitRoot
-				, size = flock.length
-				, sforceX, sforceY
-				, cforceX, cforceY
-				, aforceX, aforceY
-				, spareX, spareY
-				, attractors = boidConfig.attractors
-				, attractorCount = attractors.length
-				, attractor
-				, distSquared
-				, currPos
-				, length
-				, target
-				, ratio
+    var sepDist = boidConfig.separationDistance
+        , sepForce = boidConfig.separationForce
+        , cohDist = boidConfig.cohesionDistance
+        , cohForce = boidConfig.cohesionForce
+        , aliDist = boidConfig.alignmentDistance
+        , aliForce = boidConfig.alignmentForce
+        , speedLimit = boidConfig.speedLimit
+        , accelerationLimit = boidConfig.accelerationLimit
+        , accelerationLimitRoot = boidConfig.accelerationLimitRoot
+        , speedLimitRoot = boidConfig.speedLimitRoot
+        , size = flock.length
+        , sforceX, sforceY
+        , cforceX, cforceY
+        , aforceX, aforceY
+        , spareX, spareY
+        , attractors = boidConfig.attractors
+        , attractorCount = attractors.length
+        , attractor
+        , distSquared
+        , currPos
+        , length
+        , target
+        , ratio
 
-		while (current--) {
-				sforceX = 0; sforceY = 0
-				cforceX = 0; cforceY = 0
-				aforceX = 0; aforceY = 0
-				currPos = flock[current]
+    while (current--) {
+        sforceX = 0; sforceY = 0
+        cforceX = 0; cforceY = 0
+        aforceX = 0; aforceY = 0
+        currPos = flock[current]
 
-				// Attractors
-				target = attractorCount
-				while (target--) {
-						attractor = attractors[target]
-						spareX = currPos[0] - attractor[0]
-						spareY = currPos[1] - attractor[1]
-						distSquared = spareX*spareX + spareY*spareY
+        // Attractors
+        target = attractorCount
+        while (target--) {
+            attractor = attractors[target]
+            spareX = currPos[0] - attractor[0]
+            spareY = currPos[1] - attractor[1]
+            distSquared = spareX*spareX + spareY*spareY
 
-						if (distSquared < attractor[2]*attractor[2]) {
-								length = hypot(spareX, spareY)
-								flock[current][SPEEDX] -= (attractor[3] * spareX / length) || 0
-								flock[current][SPEEDY] -= (attractor[3] * spareY / length) || 0
-						}
-				}
+            if (distSquared < attractor[2]*attractor[2]) {
+                length = hypot(spareX, spareY)
+                flock[current][SPEEDX] -= (attractor[3] * spareX / length) || 0
+                flock[current][SPEEDY] -= (attractor[3] * spareY / length) || 0
+            }
+        }
 
-				target = size
-				while (target--) {
-						if (target === current) continue
-						spareX = currPos[0] - flock[target][0]
-						spareY = currPos[1] - flock[target][1]
-						distSquared = spareX*spareX + spareY*spareY
+        target = size
+        while (target--) {
+            if (target === current) continue
+            spareX = currPos[0] - flock[target][0]
+            spareY = currPos[1] - flock[target][1]
+            distSquared = spareX*spareX + spareY*spareY
 
-						if (distSquared < sepDist) {
-								sforceX += spareX
-								sforceY += spareY
-						} else {
-								if (distSquared < cohDist) {
-										cforceX += spareX
-										cforceY += spareY
-								}
-								if (distSquared < aliDist) {
-										aforceX += flock[target][SPEEDX]
-										aforceY += flock[target][SPEEDY]
-								}
-						}
-				}
+            if (distSquared < sepDist) {
+                sforceX += spareX
+                sforceY += spareY
+            } else {
+                if (distSquared < cohDist) {
+                    cforceX += spareX
+                    cforceY += spareY
+                }
+                if (distSquared < aliDist) {
+                    aforceX += flock[target][SPEEDX]
+                    aforceY += flock[target][SPEEDY]
+                }
+            }
+        }
 
-				// Separation
-				length = hypot(sforceX, sforceY)
-				flock[current][ACCELERATIONX] += (sepForce * sforceX / length) || 0
-				flock[current][ACCELERATIONY] += (sepForce * sforceY / length) || 0
-				// Cohesion
-				length = hypot(cforceX, cforceY)
-				flock[current][ACCELERATIONX] -= (cohForce * cforceX / length) || 0
-				flock[current][ACCELERATIONY] -= (cohForce * cforceY / length) || 0
-				// Alignment
-				length = hypot(aforceX, aforceY)
-				flock[current][ACCELERATIONX] -= (aliForce * aforceX / length) || 0
-				flock[current][ACCELERATIONY] -= (aliForce * aforceY / length) || 0
-		}
-		current = size
+        // Separation
+        length = hypot(sforceX, sforceY)
+        flock[current][ACCELERATIONX] += (sepForce * sforceX / length) || 0
+        flock[current][ACCELERATIONY] += (sepForce * sforceY / length) || 0
+        // Cohesion
+        length = hypot(cforceX, cforceY)
+        flock[current][ACCELERATIONX] -= (cohForce * cforceX / length) || 0
+        flock[current][ACCELERATIONY] -= (cohForce * cforceY / length) || 0
+        // Alignment
+        length = hypot(aforceX, aforceY)
+        flock[current][ACCELERATIONX] -= (aliForce * aforceX / length) || 0
+        flock[current][ACCELERATIONY] -= (aliForce * aforceY / length) || 0
+    }
+    current = size
 
-		// Apply speed/acceleration for
-		// this tick
-		while (current--) {
-				if (accelerationLimit) {
-						distSquared = flock[current][ACCELERATIONX]*flock[current][ACCELERATIONX] + flock[current][ACCELERATIONY]*flock[current][ACCELERATIONY]
-						if (distSquared > accelerationLimit) {
-								ratio = accelerationLimitRoot / hypot(flock[current][ACCELERATIONX], flock[current][ACCELERATIONY])
-								flock[current][ACCELERATIONX] *= ratio
-								flock[current][ACCELERATIONY] *= ratio
-						}
-				}
+    // Apply speed/acceleration for
+    // this tick
+    while (current--) {
+        if (accelerationLimit) {
+            distSquared = flock[current][ACCELERATIONX]*flock[current][ACCELERATIONX] + flock[current][ACCELERATIONY]*flock[current][ACCELERATIONY]
+            if (distSquared > accelerationLimit) {
+                ratio = accelerationLimitRoot / hypot(flock[current][ACCELERATIONX], flock[current][ACCELERATIONY])
+                flock[current][ACCELERATIONX] *= ratio
+                flock[current][ACCELERATIONY] *= ratio
+            }
+        }
 
-				flock[current][SPEEDX] += flock[current][ACCELERATIONX]
-				flock[current][SPEEDY] += flock[current][ACCELERATIONY]
+        flock[current][SPEEDX] += flock[current][ACCELERATIONX]
+        flock[current][SPEEDY] += flock[current][ACCELERATIONY]
 
-				if (speedLimit) {
-						distSquared = flock[current][SPEEDX]*flock[current][SPEEDX] + flock[current][SPEEDY]*flock[current][SPEEDY]
-						if (distSquared > speedLimit) {
-								ratio = speedLimitRoot / hypot(flock[current][SPEEDX], flock[current][SPEEDY])
-								flock[current][SPEEDX] *= ratio
-								flock[current][SPEEDY] *= ratio
-						}
-				}
+        if (speedLimit) {
+            distSquared = flock[current][SPEEDX]*flock[current][SPEEDX] + flock[current][SPEEDY]*flock[current][SPEEDY]
+            if (distSquared > speedLimit) {
+                ratio = speedLimitRoot / hypot(flock[current][SPEEDX], flock[current][SPEEDY])
+                flock[current][SPEEDX] *= ratio
+                flock[current][SPEEDY] *= ratio
+            }
+        }
 
-				flock[current][POSITIONX] += flock[current][SPEEDX]
-				flock[current][POSITIONY] += flock[current][SPEEDY]
-		}
+        flock[current][POSITIONX] += flock[current][SPEEDX]
+        flock[current][POSITIONY] += flock[current][SPEEDY]
+    }
 
 }
 
@@ -192,11 +192,11 @@ function updateOrgPos () {
 // double-dog-leg hypothenuse approximation
 // http://forums.parallax.com/discussion/147522/dog-leg-hypotenuse-approximation
 function hypot(a, b) {
-  a = Math.abs(a)
-  b = Math.abs(b)
-  var lo = Math.min(a, b)
-  var hi = Math.max(a, b)
-  return hi + 3 * lo / 32 + Math.max(0, 2 * lo - hi) / 8 + Math.max(0, 4 * lo - hi) / 16
+    a = Math.abs(a)
+    b = Math.abs(b)
+    var lo = Math.min(a, b)
+    var hi = Math.max(a, b)
+    return hi + 3 * lo / 32 + Math.max(0, 2 * lo - hi) / 8 + Math.max(0, 4 * lo - hi) / 16
 }
 
 
@@ -711,9 +711,9 @@ function update () {
         }
     }
 
-	if (updates % 2 == 0) {
-		updateOrganisms();
-	}
+    if (updates % 2 == 0) {
+        updateOrganisms();
+    }
 
     curlProgram.bind();
     gl.uniform2f(curlProgram.uniforms.texelSize, 1.0 / textureWidth, 1.0 / textureHeight);
@@ -768,12 +768,12 @@ function update () {
     blit(null);
 
     requestAnimationFrame(update);
-	updates++;
+    updates++;
 }
 
 function updateOrganisms() {
-	updateOrgPos();
-	let flock = organisms[0];
+    updateOrgPos();
+    let flock = organisms[0];
     for (let i = 0; i < flock.length; i++) {
         const org = flock[i];
 
@@ -781,18 +781,18 @@ function updateOrganisms() {
         const splatDy = 1000 * (Math.random() - 0.5);
         splat(org[0], org[1], splatDx, splatDy, placeholdercolor, config.SPLAT_RADIUS);
 
-		if (org[0] > canvas.width) {
-			org[0] -= canvas.width;
-		}
-		if (org[1] > canvas.height) {
-			org[1] -= canvas.height;
-		}
-		if (org[0] < 0) {
-			org[0] += canvas.width;
-		}
-		if (org[1] < 0) {
-			org[1] += canvas.height;
-		}
+        if (org[0] > canvas.width) {
+            org[0] -= canvas.width;
+        }
+        if (org[1] > canvas.height) {
+            org[1] -= canvas.height;
+        }
+        if (org[0] < 0) {
+            org[0] += canvas.width;
+        }
+        if (org[1] < 0) {
+            org[1] += canvas.height;
+        }
     }
 }
 
