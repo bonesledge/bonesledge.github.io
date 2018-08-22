@@ -45,10 +45,10 @@ function initOrganisms () {
 
 let boidConfig = {
 
-    speedLimitRoot: 4,
-    accelerationLimitRoot: 1,
-    speedLimit: 16,
-    accelerationLimit: 1,
+    speedLimitRoot: 10,
+    accelerationLimitRoot: 4,
+    speedLimit: 100,
+    accelerationLimit: 16,
     separationDistance: 3600,
     alignmentDistance: 32400,
     cohesionDistance: 32400,
