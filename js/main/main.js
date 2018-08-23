@@ -4,6 +4,7 @@ const canvas = document.getElementsByTagName('canvas')[0];
 canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 
+
 let config = {
     TEXTURE_DOWNSAMPLE: 1,
     DENSITY_DISSIPATION: 0.98,
@@ -19,12 +20,8 @@ let config = {
 }
 
 let pointers = [];
-let splatStack = [];
 /* organisms are an array of arrays. Each species is its own flock whose velocity vectors are 
 impacted by the boid algorithm.
-
-
-
 */
 let organisms = JSON.parse(sessionStorage.getItem('organisms')) || [];
 
@@ -681,6 +678,7 @@ const blit = (() => {
     }
 })();
 
+let gameState = updateSimulation;
 let lastTime = Date.now();
 let updates = 0;
 initOrganisms();
@@ -688,14 +686,15 @@ update();
 
 function update () {
     resizeCanvas();
+    gameState();
+    requestAnimationFrame(update);
+}
 
+function updateSimulation () {
     const dt = Math.min((Date.now() - lastTime) / 1000, 0.016);
     lastTime = Date.now();
 
     gl.viewport(0, 0, textureWidth, textureHeight);
-
-    if (splatStack.length > 0)
-        multipleSplats(splatStack.pop());
 
     advectionProgram.bind();
     gl.uniform2f(advectionProgram.uniforms.texelSize, 1.0 / textureWidth, 1.0 / textureHeight);
@@ -776,8 +775,11 @@ function update () {
     gl.uniform1i(displayProgram.uniforms.uTexture, density.read[2]);
     blit(null);
 
-    requestAnimationFrame(update);
     updates++;
+}
+
+function updateSpeciateScreen() {
+
 }
 
 function updateOrganisms() {
@@ -896,7 +898,14 @@ window.addEventListener('touchend', (e) => {
                 pointers[j].down = false;
 });
 
-window.onbeforeunload = function (e) {
-    jsonOrg = JSON.stringify(organisms);
-    sessionStorage.setItem('organisms', jsonOrg);
-};
+const speciateButton = document.getElementsByTagName('button')[0];
+speciateButton.addEventListener("click", function(){
+    if (speciateButton.value=="Speciate") {
+        speciateButton.value = "Spawn";
+        gameState = updateSpeciateScreen;
+    } else {
+        speciateButton.value = "Speciate";
+        gameState = updateSimulation;
+    }
+    alert("boop");
+});
