@@ -65,6 +65,7 @@ let boidConfig = {
         , 0.25 // spd
     ]]
 }
+
 const POSITIONX = 0
 const POSITIONY = 1
 const SPEEDX = 2
