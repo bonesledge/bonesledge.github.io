@@ -6,7 +6,7 @@ body {
     margin: 0;
     position: absolute;
     width: 100%;
-	height: 100%;
+    height: 100%;
 }
 
 .wrapper {
@@ -24,3 +24,12 @@ canvas {
     height: 10%;
 }
 
+.speciatebutton {
+    width: 100%;
+    height: 100%;
+}
+
+.spawnbutton {
+    width: 100%;
+    height: 100%;
+}
