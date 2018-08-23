@@ -20,18 +20,21 @@ let config = {
 
 let pointers = [];
 let splatStack = [];
-/* organisms are an array of arrays. Each species is its own flock, whose velocity vectors are 
+/* organisms are an array of arrays. Each species is its own flock whose velocity vectors are 
 impacted by the boid algorithm.
 
 
 
 */
-let organisms = [];
+let organisms = JSON.parse(sessionStorage.getItem('organisms')) || [];
 
 
 const  { gl, ext } = getWebGLContext(canvas);
 
 function initOrganisms () {
+    if (organisms.length > 0) {
+        return;
+    }
     for (let i = 0; i < config.SPECIES_COUNT; i++) {
         organisms[i] = [];
         let color = [Math.random() * 10, Math.random() * 10, Math.random() * 10];
@@ -892,3 +895,8 @@ window.addEventListener('touchend', (e) => {
             if (touches[i].identifier == pointers[j].id)
                 pointers[j].down = false;
 });
+
+window.onbeforeunload = function (e) {
+    jsonOrg = JSON.stringify(organisms);
+    sessionStorage.setItem('organisms', jsonOrg);
+};
