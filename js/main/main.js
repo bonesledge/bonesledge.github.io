@@ -23,7 +23,7 @@ let pointers = [];
 /* organisms are an array of arrays. Each species is its own flock whose velocity vectors are 
 impacted by the boid algorithm.
 */
-let organisms = JSON.parse(sessionStorage.getItem('organisms')) || [];
+let organisms = [];
 
 
 const  { gl, ext } = getWebGLContext(canvas);
@@ -898,14 +898,13 @@ window.addEventListener('touchend', (e) => {
                 pointers[j].down = false;
 });
 
-const speciateButton = document.getElementsByTagName('button')[0];
+var speciateButton = document.getElementsByTagName('button')[0];
 speciateButton.addEventListener("click", function(){
-    if (speciateButton.value=="Speciate") {
+    if (speciateButton.value == "Speciate") {
         speciateButton.value = "Spawn";
         gameState = updateSpeciateScreen;
     } else {
         speciateButton.value = "Speciate";
         gameState = updateSimulation;
     }
-    alert("boop");
 });
