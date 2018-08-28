@@ -9,7 +9,7 @@ body {
     height: 100%;
 }
 
-.wrapper {
+#wrapper {
     width: 100%;
     height: 100%;
 }
@@ -17,19 +17,55 @@ body {
 canvas {
     width: 100%;
     height: 90%;
+    position: absolute;
+    z-index: -1;
 }
 
-.controls {
+#controls {
     width: 100%;
     height: 10%;
 }
 
-.speciatebutton {
+#speciateoptions {
+    width: 100%;
+    height: 90%
+}
+
+#speciatebutton {
     width: 100%;
     height: 100%;
 }
 
-.spawnbutton {
-    width: 100%;
-    height: 100%;
+.slider {
+    -webkit-appearance: none;
+    position: absolute;
+    left: 20%;
+    top: 40%;
+    width: 60%;
+    border-radius: 5px;   
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    z-index: 10;
 }
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%; 
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+

@@ -41,31 +41,33 @@ function initOrganisms () {
                 , 0, 0                              // speed
                 , 0, 0                               // acceleration
                 , color                                 // color
-            ]
+            ];
+            organisms[i][j][COHESION_FORCE] = boidConfig.cohesionForce.default;
         }
     }
 }
 
 let boidConfig = {
 
-    speedLimitRoot: 10,
-    accelerationLimitRoot: 4,
-    speedLimit: 100,
-    accelerationLimit: 16,
+    speedLimitRoot: { default: 10, min: 0, max: 20 },
+    accelerationLimitRoot: { default: 4, min: 0, max: 10 },
+    speedLimit: { default: 100, min: 0, max: 400 },
+    accelerationLimit: { default: 16, min: 0, max: 100 },
     separationDistance: 3600,
     alignmentDistance: 32400,
     cohesionDistance: 32400,
-    separationForce: 0.15,
-    cohesionForce: 0.1,
-    alignmentForce: 0.7,
+    separationForce: { default: 0.15, min: 0, max: 1 },
+    cohesionForce: { default: 0.1, min: 0, max: 1 },
+    alignmentForce: { default: 0.7, min: 0, max: 1 },
     attractors: [[
         Infinity // x
         , Infinity // y
         , 150 // dist
         , 0.25 // spd
-    ]]
+    ]],
 }
 
+// refer to indexes within each organism's array, not values.
 const POSITIONX = 0
 const POSITIONY = 1
 const SPEEDX = 2
@@ -73,7 +75,11 @@ const SPEEDY = 3
 const ACCELERATIONX = 4
 const ACCELERATIONY = 5
 const COLOR_INDEX = 6 
-
+const SPEED_LIMIT = 7
+const SPEED_LIMIT_ROOT = 8
+const SEPARATION_FORCE = 9
+const COHESION_FORCE = 10
+const ALIGNMENT_FORCE = 11
 
 function updateOrgPos () {
     for (let i = 0; i < organisms.length; i++) {
@@ -82,15 +88,15 @@ function updateOrgPos () {
 
 
         var sepDist = boidConfig.separationDistance
-            , sepForce = boidConfig.separationForce
+            , sepForce = boidConfig.separationForce.default
             , cohDist = boidConfig.cohesionDistance
-            , cohForce = boidConfig.cohesionForce
+            , cohForce = boidConfig.cohesionForce.default
             , aliDist = boidConfig.alignmentDistance
-            , aliForce = boidConfig.alignmentForce
-            , speedLimit = boidConfig.speedLimit
-            , accelerationLimit = boidConfig.accelerationLimit
-            , accelerationLimitRoot = boidConfig.accelerationLimitRoot
-            , speedLimitRoot = boidConfig.speedLimitRoot
+            , aliForce = boidConfig.alignmentForce.default
+            , speedLimit = boidConfig.speedLimit.default
+            , accelerationLimit = boidConfig.accelerationLimit.default
+            , accelerationLimitRoot = boidConfig.accelerationLimitRoot.default
+            , speedLimitRoot = boidConfig.speedLimitRoot.default
             , size = flock.length
             , sforceX, sforceY
             , cforceX, cforceY
@@ -106,10 +112,12 @@ function updateOrgPos () {
             , ratio
 
         while (current--) {
+            cohForce = flock[current][COHESION_FORCE]
             sforceX = 0; sforceY = 0
             cforceX = 0; cforceY = 0
             aforceX = 0; aforceY = 0
             currPos = flock[current]
+            
 
             // Attractors
             target = attractorCount
@@ -166,6 +174,7 @@ function updateOrgPos () {
         // Apply speed/acceleration for
         // this tick
         while (current--) {
+            
             if (accelerationLimit) {
                 distSquared = flock[current][ACCELERATIONX]*flock[current][ACCELERATIONX] + flock[current][ACCELERATIONY]*flock[current][ACCELERATIONY]
                 if (distSquared > accelerationLimit) {
@@ -779,7 +788,7 @@ function updateSimulation () {
 }
 
 function updateSpeciateScreen() {
-
+    
 }
 
 function updateOrganisms() {
@@ -857,15 +866,24 @@ function splitSpecies() {
     organisms.push(oldSpecies, newSpecies); 
 }
 
+function createSpeciateOptions() {
+    const speciateOptionsDiv = document.getElementById("speciateoptions");
+    const cohesionSlider = document.createElement("input");
+    cohesionSlider.className = "slider";
+    cohesionSlider.id = "cohesionslider";
+    //  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+    cohesionSlider.setAttribute("type", "range");
+    cohesionSlider.setAttribute("min", 0);
+    cohesionSlider.setAttribute("max", 100);
+    cohesionSlider.setAttribute("value", 70);
+    speciateOptionsDiv.appendChild(cohesionSlider);
+}
 
-
-
-
-
-
-
-
-
+function removeSpeciateOptions() {
+    const node = document.getElementById("speciateoptions");
+    const cNode = node.cloneNode(false);
+    node.parentNode.replaceChild(cNode, node);
+}
 
 canvas.addEventListener('mousemove', (e) => {
     pointers[0].moved = pointers[0].down;
@@ -920,14 +938,16 @@ window.addEventListener('touchend', (e) => {
                 pointers[j].down = false;
 });
 
-var speciateButton = document.getElementsByTagName('button')[0];
+var speciateButton = document.getElementById('speciatebutton');
 speciateButton.addEventListener("click", function(){
-    if (gameState == updateSimulation) {
+    if (gameState === updateSimulation) {
         speciateButton.value = "Spawn";
         gameState = updateSpeciateScreen;
+        createSpeciateOptions();
     } else {
         speciateButton.value = "Speciate";
         splitSpecies();
         gameState = updateSimulation;
+        removeSpeciateOptions();
     }
 });
