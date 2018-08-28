@@ -854,6 +854,8 @@ function resizeCanvas () {
     }
 }
 
+let exemplar;
+
 function splitSpecies() {
     organisms.sort((a, b) => (a.length >= b.length));
     const biggestSpecies = organisms.pop();
@@ -864,9 +866,24 @@ function splitSpecies() {
         newSpecies[i][COLOR_INDEX] = color;
     }
     organisms.push(oldSpecies, newSpecies); 
+    exemplar = newSpecies[0];
 }
 
-function createSpeciateOptions() {
+function getHundredNormalized(value, min, max) {
+    const difference = max - min;
+    const adjusted = value - min;
+    const normalized = 1.0*adjusted/difference;
+    return normalized*100;
+}
+
+function getHundredDenormalized(value, min, max) {
+    const normalized = value/100.0;
+    const difference = max - min;
+    const adjusted = normalized*difference;
+    return normalized + min;
+}
+
+function createSpeciateOptions(newSpecies) {
     const speciateOptionsDiv = document.getElementById("speciateoptions");
     const cohesionSlider = document.createElement("input");
     cohesionSlider.className = "slider";
@@ -875,7 +892,10 @@ function createSpeciateOptions() {
     cohesionSlider.setAttribute("type", "range");
     cohesionSlider.setAttribute("min", 0);
     cohesionSlider.setAttribute("max", 100);
-    cohesionSlider.setAttribute("value", 70);
+    cohesionSlider.setAttribute("value", getHundredNormalized(exemplar[COHESION_FORCE]), boidConfig.cohesionForce.min, boidConfig.cohesionForce.max);
+    cohesionSlider.oninput = function() {
+        exemplar[COHESION_FORCE] = getHundredDenormalized(this.value, boidConfig.cohesionForce.min, boidConfig.cohesionForce.max);
+    }
     speciateOptionsDiv.appendChild(cohesionSlider);
 }
 
@@ -883,6 +903,14 @@ function removeSpeciateOptions() {
     const node = document.getElementById("speciateoptions");
     const cNode = node.cloneNode(false);
     node.parentNode.replaceChild(cNode, node);
+}
+
+function matchSpeciesToExemplar(species) {
+    for (let i = 0; i < species.length; i++) {
+        for (let j = COLOR_INDEX; j < species[i].length; j++) {
+            species[i][j] = exemplar[j];
+        }
+    }
 }
 
 canvas.addEventListener('mousemove', (e) => {
@@ -943,10 +971,11 @@ speciateButton.addEventListener("click", function(){
     if (gameState === updateSimulation) {
         speciateButton.value = "Spawn";
         gameState = updateSpeciateScreen;
+        splitSpecies();
         createSpeciateOptions();
     } else {
+        matchSpeciesToExemplar(organisms[organisms.length - 1]);
         speciateButton.value = "Speciate";
-        splitSpecies();
         gameState = updateSimulation;
         removeSpeciateOptions();
     }
