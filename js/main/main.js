@@ -845,6 +845,28 @@ function resizeCanvas () {
     }
 }
 
+function splitSpecies() {
+    organisms.sort((a, b) => (a.length >= b.length));
+    const biggestSpecies = organisms.pop();
+    const oldSpecies = biggestSpecies.slice(0, biggestSpecies.length / 2);
+    const newSpecies = biggestSpecies.slice(biggestSpecies.length / 2, biggestSpecies.length - 1);
+    const color = [Math.random() * 10, Math.random() * 10, Math.random() * 10];
+    for (let i = 0; i < newSpecies.length; i++) {
+        newSpecies[i][COLOR_INDEX] = color;
+    }
+    organisms.push(oldSpecies, newSpecies); 
+}
+
+
+
+
+
+
+
+
+
+
+
 canvas.addEventListener('mousemove', (e) => {
     pointers[0].moved = pointers[0].down;
     pointers[0].dx = (e.offsetX - pointers[0].x) * 10.0;
@@ -900,11 +922,12 @@ window.addEventListener('touchend', (e) => {
 
 var speciateButton = document.getElementsByTagName('button')[0];
 speciateButton.addEventListener("click", function(){
-    if (speciateButton.value == "Speciate") {
+    if (gameState == updateSimulation) {
         speciateButton.value = "Spawn";
         gameState = updateSpeciateScreen;
     } else {
         speciateButton.value = "Speciate";
+        splitSpecies();
         gameState = updateSimulation;
     }
 });
