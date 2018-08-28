@@ -884,7 +884,9 @@ function getHundredDenormalized(value, min, max) {
 }
 
 function createSpeciateOptions(newSpecies) {
-    const speciateOptionsDiv = document.getElementById("speciateoptions");
+    const speciateOptionsDiv = document.createElement("div");
+    speciateOptionsDiv.id = "speciateoptions";
+    document.getElementById("wrapper").appendChild(speciateOptionsDiv);
     const cohesionSlider = document.createElement("input");
     cohesionSlider.className = "slider";
     cohesionSlider.id = "cohesionslider";
@@ -900,9 +902,7 @@ function createSpeciateOptions(newSpecies) {
 }
 
 function removeSpeciateOptions() {
-    const node = document.getElementById("speciateoptions");
-    const cNode = node.cloneNode(false);
-    node.parentNode.replaceChild(cNode, node);
+    document.getElementById("speciateoptions").remove();
 }
 
 function matchSpeciesToExemplar(species) {
@@ -913,7 +913,7 @@ function matchSpeciesToExemplar(species) {
     }
 }
 
-canvas.addEventListener('mousemove', (e) => {
+window.addEventListener('mousemove', (e) => {
     pointers[0].moved = pointers[0].down;
     pointers[0].dx = (e.offsetX - pointers[0].x) * 10.0;
     pointers[0].dy = (e.offsetY - pointers[0].y) * 10.0;
@@ -921,7 +921,7 @@ canvas.addEventListener('mousemove', (e) => {
     pointers[0].y = e.offsetY;
 });
 
-canvas.addEventListener('touchmove', (e) => {
+window.addEventListener('touchmove', (e) => {
     e.preventDefault();
     const touches = e.targetTouches;
     for (let i = 0; i < touches.length; i++) {
@@ -934,12 +934,12 @@ canvas.addEventListener('touchmove', (e) => {
     }
 }, false);
 
-canvas.addEventListener('mousedown', () => {
+window.addEventListener('mousedown', () => {
     pointers[0].down = true;
     pointers[0].color = [Math.random() + 0.2, Math.random() + 0.2, Math.random() + 0.2];
 });
 
-canvas.addEventListener('touchstart', (e) => {
+window.addEventListener('touchstart', (e) => {
     e.preventDefault();
     const touches = e.targetTouches;
     for (let i = 0; i < touches.length; i++) {
@@ -966,7 +966,7 @@ window.addEventListener('touchend', (e) => {
                 pointers[j].down = false;
 });
 
-var speciateButton = document.getElementById('speciatebutton');
+const speciateButton = document.getElementById('speciatebutton');
 speciateButton.addEventListener("click", function(){
     if (gameState === updateSimulation) {
         speciateButton.value = "Spawn";
