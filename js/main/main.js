@@ -887,22 +887,34 @@ function createSpeciateOptions(newSpecies) {
     const speciateOptionsDiv = document.createElement("div");
     speciateOptionsDiv.id = "speciateoptions";
     document.getElementById("wrapper").appendChild(speciateOptionsDiv);
-    const cohesionSlider = document.createElement("input");
-    cohesionSlider.className = "slider";
-    cohesionSlider.id = "cohesionslider";
+    createSlider("cohesionslider", "20%", boidConfig.cohesionForce.min, boidConfig.cohesionForce.max, COHESION_FORCE, speciateOptionsDiv);
+
+    createSlider("alignmentslider", "25%", boidConfig.alignmentForce.min, boidConfig.alignmentForce.max, ALIGNMENT_FORCE, speciateOptionsDiv);
+    createSlider("speedslider", "30%", boidConfig.speedLimit.min, boidConfig.speedLimit.max, SPEED_LIMIT, speciateOptionsDiv);
+}
+
+function createSlider(id, top, min, max, exemplarIndex, div) {
     //  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-    cohesionSlider.setAttribute("type", "range");
-    cohesionSlider.setAttribute("min", 0);
-    cohesionSlider.setAttribute("max", 100);
-    cohesionSlider.setAttribute("value", getHundredNormalized(exemplar[COHESION_FORCE]), boidConfig.cohesionForce.min, boidConfig.cohesionForce.max);
-    cohesionSlider.oninput = function() {
-        exemplar[COHESION_FORCE] = getHundredDenormalized(this.value, boidConfig.cohesionForce.min, boidConfig.cohesionForce.max);
+    const slider = document.createElement("input");
+    slider.className = "slider";
+    slider.id = id;
+    slider.setAttribute("type", "range");
+    //slider.setAttribute("top", top);
+    slider.setAttribute("min", 0);
+    slider.setAttribute("max", 100);
+    slider.setAttribute("value", getHundredNormalized(exemplar[exemplarIndex]), min, max);
+    slider.oninput = function() {
+        exemplar[exemplarIndex] = getHundredDenormalized(this.value, min, max);
     }
-    speciateOptionsDiv.appendChild(cohesionSlider);
+    div.appendChild(slider);
 }
 
 function removeSpeciateOptions() {
     document.getElementById("speciateoptions").remove();
+}
+
+function finalizeExemplar() {
+    exemplar[SPEED_LIMIT_ROOT] = Math.sqrt(exemplar[SPEED_LIMIT]);
 }
 
 function matchSpeciesToExemplar(species) {
@@ -974,6 +986,7 @@ speciateButton.addEventListener("click", function(){
         splitSpecies();
         createSpeciateOptions();
     } else {
+        finalizeExemplar();
         matchSpeciesToExemplar(organisms[organisms.length - 1]);
         speciateButton.value = "Speciate";
         gameState = updateSimulation;
