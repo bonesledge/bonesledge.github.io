@@ -43,6 +43,10 @@ function initOrganisms () {
                 , color                                 // color
             ];
             organisms[i][j][COHESION_FORCE] = boidConfig.cohesionForce.default;
+            organisms[i][j][ALIGNMENT_FORCE] = boidConfig.alignmentForce.default;
+            organisms[i][j][SEPARATION_FORCE] = boidConfig.separationForce.default;
+            organisms[i][j][SPEED_LIMIT_ROOT] = boidConfig.speedLimitRoot.default;
+            organisms[i][j][SPEED_LIMIT] = boidConfig.speedLimit.default;
         }
     }
 }
