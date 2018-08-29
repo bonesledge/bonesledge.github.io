@@ -887,13 +887,15 @@ function createSpeciateOptions(newSpecies) {
     const speciateOptionsDiv = document.createElement("div");
     speciateOptionsDiv.id = "speciateoptions";
     document.getElementById("wrapper").appendChild(speciateOptionsDiv);
-    createSlider("cohesionslider", "20%", boidConfig.cohesionForce.min, boidConfig.cohesionForce.max, COHESION_FORCE, speciateOptionsDiv);
-
-    createSlider("alignmentslider", "25%", boidConfig.alignmentForce.min, boidConfig.alignmentForce.max, ALIGNMENT_FORCE, speciateOptionsDiv);
-    createSlider("speedslider", "30%", boidConfig.speedLimit.min, boidConfig.speedLimit.max, SPEED_LIMIT, speciateOptionsDiv);
+    createSlider("cohesionslider", boidConfig.cohesionForce.min, boidConfig.cohesionForce.max, COHESION_FORCE, speciateOptionsDiv,
+        "solitary", "social");
+    createSlider("alignmentslider", boidConfig.alignmentForce.min, boidConfig.alignmentForce.max, ALIGNMENT_FORCE, speciateOptionsDiv,
+        "wiggly", "straight");
+    createSlider("speedslider", boidConfig.speedLimit.min, boidConfig.speedLimit.max, SPEED_LIMIT, speciateOptionsDiv,
+        "slow", "fast");
 }
 
-function createSlider(id, top, min, max, exemplarIndex, div) {
+function createSlider(id, min, max, exemplarIndex, div, leftLabelText, rightLabelText) {
     //  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
     const slider = document.createElement("input");
     slider.className = "slider";
@@ -906,7 +908,18 @@ function createSlider(id, top, min, max, exemplarIndex, div) {
     slider.oninput = function() {
         exemplar[exemplarIndex] = getHundredDenormalized(this.value, min, max);
     }
+
     div.appendChild(slider);
+    div.appendChild(createLabel("leftlabel", leftLabelText, id));
+    div.appendChild(createLabel("rightlabel", rightLabelText, id));
+}
+
+function createLabel(className, text, forId) {
+    const label = document.createElement("label");
+    label.className = className;
+    label.setAttribute("for", forId);
+    label.innerHTML = text;
+    return label;
 }
 
 function removeSpeciateOptions() {
@@ -981,14 +994,14 @@ window.addEventListener('touchend', (e) => {
 const speciateButton = document.getElementById('speciatebutton');
 speciateButton.addEventListener("click", function(){
     if (gameState === updateSimulation) {
-        speciateButton.value = "Spawn";
+        speciateButton.innerHTML = "spawn";
         gameState = updateSpeciateScreen;
         splitSpecies();
         createSpeciateOptions();
     } else {
         finalizeExemplar();
         matchSpeciesToExemplar(organisms[organisms.length - 1]);
-        speciateButton.value = "Speciate";
+        speciateButton.innerHTML = "speciate";
         gameState = updateSimulation;
         removeSpeciateOptions();
     }

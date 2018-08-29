@@ -65,3 +65,30 @@ canvas {
     cursor: pointer;
 }
 
+
+fieldset > * {
+    vertical-align: middle;
+}
+
+.leftlabel{
+  position: absolute;
+  padding: 2px;
+  text-align: center;
+  width: 10%;
+  height: 25px;
+  color:white;
+  background: darkred;
+  left: 10%;
+}
+
+.rightlabel{
+  position: absolute;
+  padding: 2px;
+  text-align: center;
+  width: 10%;
+  height: 25px;
+  color:white;
+  background: purple;
+  left: 80%;
+}
+
