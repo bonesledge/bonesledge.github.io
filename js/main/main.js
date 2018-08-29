@@ -65,6 +65,7 @@ let boidConfig = {
         , 150 // dist
         , 0.25 // spd
     ]],
+    color: { min: 0, max: 10 }
 }
 
 // refer to indexes within each organism's array, not values.
@@ -94,9 +95,9 @@ function updateOrgPos () {
             , aliDist = boidConfig.alignmentDistance
             , aliForce = boidConfig.alignmentForce.default
             , speedLimit = boidConfig.speedLimit.default
+            , speedLimitRoot = boidConfig.speedLimitRoot.default
             , accelerationLimit = boidConfig.accelerationLimit.default
             , accelerationLimitRoot = boidConfig.accelerationLimitRoot.default
-            , speedLimitRoot = boidConfig.speedLimitRoot.default
             , size = flock.length
             , sforceX, sforceY
             , cforceX, cforceY
@@ -113,6 +114,10 @@ function updateOrgPos () {
 
         while (current--) {
             cohForce = flock[current][COHESION_FORCE]
+            aliForce = flock[current][ALIGNMENT_FORCE]
+            sepForce = flock[current][SEPARATION_FORCE]
+            speedLimit = flock[current][SPEED_LIMIT]
+            speedLimitRoot = flock[current][SPEED_LIMIT_ROOT]
             sforceX = 0; sforceY = 0
             cforceX = 0; cforceY = 0
             aforceX = 0; aforceY = 0
@@ -174,7 +179,9 @@ function updateOrgPos () {
         // Apply speed/acceleration for
         // this tick
         while (current--) {
-            
+            speedLimit = flock[current][SPEED_LIMIT]
+            speedLimitRoot = flock[current][SPEED_LIMIT_ROOT]
+
             if (accelerationLimit) {
                 distSquared = flock[current][ACCELERATIONX]*flock[current][ACCELERATIONX] + flock[current][ACCELERATIONY]*flock[current][ACCELERATIONY]
                 if (distSquared > accelerationLimit) {
@@ -887,28 +894,75 @@ function createSpeciateOptions(newSpecies) {
     const speciateOptionsDiv = document.createElement("div");
     speciateOptionsDiv.id = "speciateoptions";
     document.getElementById("wrapper").appendChild(speciateOptionsDiv);
-    createSlider("cohesionslider", boidConfig.cohesionForce.min, boidConfig.cohesionForce.max, COHESION_FORCE, speciateOptionsDiv,
-        "solitary", "social");
-    createSlider("alignmentslider", boidConfig.alignmentForce.min, boidConfig.alignmentForce.max, ALIGNMENT_FORCE, speciateOptionsDiv,
-        "wiggly", "straight");
-    createSlider("speedslider", boidConfig.speedLimit.min, boidConfig.speedLimit.max, SPEED_LIMIT, speciateOptionsDiv,
-        "slow", "fast");
+    
+    // <style data="test" type="text/css"></style>
+    const style = document.createElement("style");
+    style.setAttribute("data", "test");
+    style.setAttribute("type", "text/css");
+    speciateOptionsDiv.appendChild(style);
+
+    const c1 = createLabel("rightlabel", "", "redslider");
+    const c2 = createLabel("rightlabel", "", "greenslider");
+    const c3 = createLabel("rightlabel", "", "blueslider");
+    const bgColor = toColor(exemplar[COLOR_INDEX]);
+    c1.style.backgroundColor = bgColor;
+    c2.style.backgroundColor = bgColor;
+    c3.style.backgroundColor = bgColor;
+    createColorSlider("redslider", boidConfig.color.min, boidConfig.color.max, exemplar,
+        0, speciateOptionsDiv, "red", c1, c2, c3, c1);
+    createColorSlider("greenslider", boidConfig.color.min, boidConfig.color.max, exemplar,
+        1, speciateOptionsDiv, "green", c1, c2, c3, c2);
+    createColorSlider("blueslider", boidConfig.color.min, boidConfig.color.max, exemplar,
+        2, speciateOptionsDiv, "blue", c1, c2, c3, c3);
+    createConfigSlider("cohesionslider", boidConfig.cohesionForce.min, boidConfig.cohesionForce.max, 
+        COHESION_FORCE, speciateOptionsDiv, "solitary", "social");
+    createConfigSlider("alignmentslider", boidConfig.alignmentForce.min, boidConfig.alignmentForce.max,
+        ALIGNMENT_FORCE, speciateOptionsDiv, "wiggly", "straight");
+    createConfigSlider("speedslider", boidConfig.speedLimit.min, boidConfig.speedLimit.max,
+        SPEED_LIMIT, speciateOptionsDiv, "slow", "fast");
 }
 
-function createSlider(id, min, max, exemplarIndex, div, leftLabelText, rightLabelText) {
+function toColor(colorList) {
+    return "rgb(" + 255*colorList[0] + ", " + 255*colorList[1] + ", " + 255*colorList[2] + ")";
+}
+
+function createSlider(id, oninput) {
     //  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
     const slider = document.createElement("input");
     slider.className = "slider";
     slider.id = id;
     slider.setAttribute("type", "range");
-    //slider.setAttribute("top", top);
     slider.setAttribute("min", 0);
     slider.setAttribute("max", 100);
-    slider.setAttribute("value", getHundredNormalized(exemplar[exemplarIndex]), min, max);
-    slider.oninput = function() {
-        exemplar[exemplarIndex] = getHundredDenormalized(this.value, min, max);
-    }
+    slider.oninput = oninput;
+    return slider;
+}
 
+function createColorSlider(id, min, max, exemplar, rgbIndex, div, color,
+    colorExample1, colorExample2, colorExample3, colorExample) {
+    const label = createLabel("leftlabel", color, id);
+    label.style.backgroundColor = color;
+    
+    //  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+    const slider = createSlider(id, function() {
+        exemplar[COLOR_INDEX][rgbIndex] = getHundredDenormalized(this.value, min, max);
+        const bgColor = toColor(exemplar[COLOR_INDEX]);
+        colorExample1.style.backgroundColor = bgColor;
+        colorExample2.style.backgroundColor = bgColor;
+        colorExample3.style.backgroundColor = bgColor;
+    });
+    slider.value = getHundredNormalized(exemplar[COLOR_INDEX][rgbIndex], min, max);
+    div.appendChild(slider);    
+    div.appendChild(label);
+    div.appendChild(colorExample);
+}
+
+function createConfigSlider(id, min, max, exemplarIndex, div, leftLabelText, rightLabelText) {
+    //  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+    const slider = createSlider(id, function() {
+        exemplar[exemplarIndex] = getHundredDenormalized(this.value, min, max);
+    });
+    slider.value = getHundredNormalized(exemplar[exemplarIndex], min, max);
     div.appendChild(slider);
     div.appendChild(createLabel("leftlabel", leftLabelText, id));
     div.appendChild(createLabel("rightlabel", rightLabelText, id));

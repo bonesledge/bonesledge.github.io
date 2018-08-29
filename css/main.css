@@ -33,7 +33,7 @@ canvas {
     top: 90%;
 }
 
-.slider {
+.slider, .colorslider {
     -webkit-appearance: none;
     position: relative;
     left: 20%;
@@ -47,7 +47,7 @@ canvas {
     z-index: 10;
 }
 
-.slider::-webkit-slider-thumb {
+.slider::-webkit-slider-thumb, .colorslider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 25px;
@@ -57,13 +57,14 @@ canvas {
     cursor: pointer;
 }
 
-.slider::-moz-range-thumb {
+.slider::-moz-range-thumb, .colorslider::-moz-range-thumb {
     width: 25px;
     height: 25px;
     border-radius: 50%;
     background: #4CAF50;
     cursor: pointer;
 }
+
 
 
 fieldset > * {
@@ -76,8 +77,7 @@ fieldset > * {
   text-align: center;
   width: 10%;
   height: 25px;
-  color:white;
-  background: darkred;
+  color: white;
   left: 10%;
 }
 
@@ -87,8 +87,7 @@ fieldset > * {
   text-align: center;
   width: 10%;
   height: 25px;
-  color:white;
-  background: purple;
+  color: white;
   left: 80%;
 }
 
